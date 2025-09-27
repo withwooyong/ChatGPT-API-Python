@@ -3,8 +3,12 @@ from openai import OpenAI
 import numpy as np
 from typing import List
 from scipy import spatial
+from dotenv import load_dotenv
+import os
 
-client = OpenAI()
+load_dotenv()
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def create_context(question, df, max_len=1800):
     """
@@ -49,13 +53,24 @@ def answer_question(question, conversation_history):
 
     context = create_context(question, df, max_len=200)  #←질문과 학습 데이터를 비교해 컨텍스트 생성
     # 프롬프트를 생성하고 대화 기록에 추가하기
-    prompt = f"당신은 어느 호텔 직원입니다. 문맥에 따라 고객의 질문에 정중하게 대답해 주십시오. 컨텍스트가 질문에 대답할 수 없는 경우 '모르겠습니다'라고 대답하세요.\n\n컨텍스트: {context}\n\n---\n\n질문: {question}\n답변:"
+    prompt = f"""
+    당신은 TED HOTEL의 직원입니다. 
+    문맥에 따라 고객의 질문에 정중하게 대답해 주십시오.
+    컨텍스트가 질문에 대답할 수 없는 경우 '모르겠습니다'라고 대답하세요.
+    컨텍스트: {context}
+    ---
+    질문: {question}
+    답변:
+    """
+    print("--------------------------------1")
+    print(prompt)
+    print("--------------------------------2")
     conversation_history.append({"role": "user", "content": prompt})
 
     try:
         # ChatGPT에서 답변 생성
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=conversation_history,
             temperature=1,
         )

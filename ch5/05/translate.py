@@ -1,5 +1,11 @@
 from openai import OpenAI
-client = OpenAI()
+from dotenv import load_dotenv
+import os
+import time
+
+load_dotenv()
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 file = open("sample.wav", "rb")
 transcript = client.audio.translations.create(
@@ -9,7 +15,7 @@ transcript = client.audio.translations.create(
 
 # ChatGPT로 요약
 summary = client.chat.completions.create(
-    model="gpt-3.5-turbo",
+    model="gpt-4o-mini",
     messages=[
         {
             "role": "user",

@@ -1,8 +1,12 @@
 from openai import OpenAI
-client = OpenAI()
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 response = client.chat.completions.create(
-    model="gpt-3.5-turbo",
+    model="gpt-4o-mini",
     messages=[
         {"role": "user", "content": "Python에 대해 알려주세요"},
     ],

@@ -4,7 +4,9 @@ import json
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 def extract_and_parse_json(text):
     """
@@ -25,7 +27,7 @@ def load_all_pdfs(directory):
     """
     directory 폴더 아래의 PDF 파일을 읽어와 JSON 형식의 데이터 배열을 반환하는 함수
     """
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.0)
+    llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.0, api_key=os.getenv("OPENAI_API_KEY"))
     
     # directory 폴더 내의 PDF 파일 목록을 얻음
     pdf_files = [f for f in os.listdir(directory) if f.endswith(".pdf")]
@@ -95,3 +97,8 @@ def load_all_pdfs(directory):
         
         contents.append(extract_and_parse_json(result.content))
     return contents
+
+if __name__ == "__main__":
+    contents = load_all_pdfs("data")
+    print(contents)
+    

@@ -1,6 +1,11 @@
 # openai 라이브러리 불러오기
 from openai import OpenAI
-client = OpenAI()
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # 챗GPT에 요청을 전송하는 함수 정의
 def make_tweet():
@@ -16,7 +21,7 @@ def make_tweet():
 
     # 챗GPT에 요청 보내기
     response = client.chat.completions.create(
-        model = "gpt-3.5-turbo",
+        model = "gpt-4o-mini",
         messages = [
             {"role": "user", "content": content},
         ],

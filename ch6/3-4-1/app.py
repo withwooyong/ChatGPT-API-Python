@@ -2,6 +2,10 @@ from langchain.agents import Tool, create_openai_tools_agent, AgentExecutor
 from langchain_community.utilities import GoogleSearchAPIWrapper
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def create_prompt():
     template = ChatPromptTemplate.from_messages([
@@ -12,7 +16,7 @@ def create_prompt():
     return template
 
 def define_tools():
-    search = GoogleSearchAPIWrapper()
+    search = GoogleSearchAPIWrapper(google_api_key=os.getenv("GOOGLE_API_KEY"), google_cse_id=os.getenv("GOOGLE_CSE_ID"))
     return [
         Tool(
             name = "Search",
@@ -27,7 +31,7 @@ def write_response_to_file(response, filename):
     print('출력이 완료되었습니다')
 
 def main():
-    llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo", max_tokens=2000)
+    llm = ChatOpenAI(temperature=0, model="gpt-4o-mini", max_tokens=2000, api_key=os.getenv("OPENAI_API_KEY"))
     tools = define_tools()
     prompt = create_prompt()
 
@@ -36,6 +40,7 @@ def main():
 
     response = agent_executor.invoke({"theme": input("기사 주제를 입력해 주세요： ")})
     write_response_to_file(response["output"], 'output.txt')
+    print(response["output"])
 
 if __name__ == "__main__":
     main()
